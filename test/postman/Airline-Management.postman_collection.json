@@ -1,0 +1,1131 @@
+{
+	"info": {
+		"_postman_id": "3a4c64eb-818e-43f4-8284-4d7310ef4a8b",
+		"name": "Airline Management",
+		"description": "The **Airline Management API** provides essential tools and resources that enable you to **streamline the process of managing flights and passenger reservations.**\n\nCurrently, our system offers the following functionalities:\n\n- **List Available Flights:** Retrieve a comprehensive list of all flights currently available.\n    \n- **Add New Passenger:** Create new passenger profiles within the system.\n    \n- **Reserve Flights:** Book flights for registered passengers.\n    \n- **View Reservation Information:** Access detailed information about existing passenger reservations.\n    \n- **Cancel Reservation:** Terminate and remove existing flight reservations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45422442"
+	},
+	"item": [
+		{
+			"name": "Collections",
+			"item": [
+				{
+					"name": "Flights",
+					"item": [
+						{
+							"name": "200 Get Flights - Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response content type is JSON\", function () {",
+											"    pm.expect(pm.response.headers.get('Content-Type')).to.include(\"application/json\");",
+											"});",
+											"",
+											"",
+											"",
+											"pm.test(\"Response adheres to the expected JSON schema\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"",
+											"    responseData.forEach(function(flight) {",
+											"        pm.expect(flight).to.have.all.keys('f_code', 'f_name', 'source', 'destination');",
+											"        pm.expect(flight.f_code).to.be.a('string').that.is.not.empty;",
+											"        pm.expect(flight.f_name).to.be.a('string').that.is.not.empty;",
+											"        pm.expect(flight.source).to.be.a('string').that.is.not.empty;",
+											"        pm.expect(flight.destination).to.be.a('string').that.is.not.empty;",
+											"    });",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response does not contain null or invalid content\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.not.be.null;",
+											"    pm.expect(responseData).to.not.be.undefined;",
+											"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/flights",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"flights"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Passenger",
+					"item": [
+						{
+							"name": "201 Create New Passenger - Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {",
+											"    pm.expect(pm.response.code).to.eql(201);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response message indicates successful customer addition\", function () {",
+											"    const responseData = pm.response.text();",
+											"    pm.expect(responseData).to.include(\"Customer Details Added Succesfully\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response adheres to the expected schema format\", function () {",
+											"    const responseData = pm.response.text();",
+											"    ",
+											"    pm.expect(responseData).to.be.a('string').and.to.equal(\"Customer Details Added Succesfully\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Mariana Flores\",\n    \"nationality\": \"Italian\",\n    \"phone\": \"1112233\",\n    \"address\": \"56 High St.\",\n    \"aadhar\" : 112233,\n    \"gender\" : \"Female\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create New Passenger - Duplicate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.equal(409);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body is not empty\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.have.lengthOf.at.least(1, \"Response body should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"The response body should contain an error message or relevant information\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    ",
+											"    pm.expect(responseBody).to.exist.and.to.have.lengthOf.at.least(1, \"Response body should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Mateo Rivas\",\n    \"nationality\": \"American\",\n    \"phone\": \"2019876\",\n    \"address\": \"45 Oak Ave.\",\n    \"aadhar\" : 876543,\n    \"gender\" : \"Male\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create New Passenger - ID null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.equal(409);",
+											"});",
+											"",
+											"",
+											"",
+											"pm.test(\"Response body is not null\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.not.be.null;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body contains an appropriate error message\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0, \"Error message should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Isabella Castro\",\n    \"nationality\": \"Canadian\",\n    \"phone\": \"9990011\",\n    \"address\": \"12 Center Pl.\",\n    \"aadhar\" : null,\n    \"gender\" : \"Female\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create New Passenger - Name null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.equal(409);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body is not null\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.not.be.null;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body contains an appropriate error message\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0, \"Error message should not be empty\");",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": null,\n    \"nationality\": \"American\",\n    \"phone\": \"2019876\",\n    \"address\": \"45 Oak Ave.\",\n    \"aadhar\" : 876543,\n    \"gender\" : \"Male\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create New Passenger - ID empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.equal(409);",
+											"});",
+											"",
+											"",
+											"",
+											"pm.test(\"Response body is not null\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.not.be.null;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response error message follows the expected schema format\", function () {",
+											"    const responseData = pm.response.text();",
+											"    ",
+											"    pm.expect(responseData).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Error message should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Diego Morales\",\n    \"nationality\": \"German\",\n    \"phone\": \"6667788\",\n    \"address\": \"89 Low Rd.\",\n    \"aadhar\" : \"\",\n    \"gender\" : \"Male\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create New Passenger - Name empty",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"nationality\": \"British\",\n    \"phone\": \"2123456\",\n    \"address\": \"34 West Blvd.\",\n    \"aadhar\" : 2123456,\n    \"gender\" : \"Male\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/creation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"creation"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reservation",
+					"item": [
+						{
+							"name": "201 Create Reservation - Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {",
+											"    pm.expect(pm.response.code).to.equal(201);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.all.keys('aadhar', 'name', 'nationality', 'flightname', 'flightcode', 'src', 'des', 'ddate', 'pnr', 'tic');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Aadhar is a positive integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.have.property('aadhar').that.is.a('number').and.is.above(0);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Name must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 876543,\n    \"src\" : \"Medellin\",\n    \"des\" : \"Bogota\",\n    \"ddate\" : \"2025-12-01\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create Reservation - Wrong ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.equal(409);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body contains an appropriate error message\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    pm.expect(responseBody).to.include(\"Customer not Found\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response body is a non-empty string\", function () {",
+											"    const responseBody = pm.response.text();",
+											"    ",
+											"    pm.expect(responseBody).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 1514351,\n    \"src\" : \"Bogota\",\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create Reservation - Wrong Source",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.eql(409);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response message contains the expected error details\", function () {",
+											"    const responseData = pm.response.text();",
+											"    ",
+											"    pm.expect(responseData).to.include(\"Flight not found from L.A. to Medellin\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"The response message format must be a non-empty string\", function () {",
+											"    const responseData = pm.response.text();",
+											"",
+											"    pm.expect(responseData).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 789012,\n    \"src\" : \"L.A.\",\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "409 Create Reservation - Wrong Destination",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 409\", function () {",
+											"    pm.expect(pm.response.code).to.eql(409);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response message contains the expected error text\", function () {",
+											"    const responseText = pm.response.text();",
+											"    pm.expect(responseText).to.include(\"Flight not found from Bogota to Washington\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response schema matches expected structure for error messages\", function () {",
+											"    const responseData = pm.response.text();",
+											"    ",
+											"    pm.expect(responseData).to.be.a('string').that.is.not.empty;",
+											"    pm.expect(responseData).to.match(/Flight not found from .+ to .+/);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 789012,\n    \"src\" : \"Bogota\",\n    \"des\" : \"Washington\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - ID null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response contains required field 'aadhar'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.property('aadhar');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Aadhar must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.aadhar).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Aadhar should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : null,\n    \"src\" : \"Bogota\",\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - Source null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.equal(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.all.keys('src');",
+											"    pm.expect(responseData.src).to.exist.and.to.be.a('string');",
+											"});",
+											"",
+											"",
+											"pm.test(\"The 'src' field must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.src).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 444000,\n    \"src\" : null,\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-11-17\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - Destination null",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.equal(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required field 'des'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.property('des');",
+											"});",
+											"",
+											"",
+											"pm.test(\"The 'des' field must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.des).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : 444000,\n    \"src\" : \"Medellin\",\n    \"des\" : null,\n    \"ddate\" : \"2025-11-17\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - ID empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response should contain the required field 'aadhar'\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.property('aadhar');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Aadhar field must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.aadhar).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Aadhar should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : \"\",\n    \"src\" : \"Bogota\",\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - Source empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.equal(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.property('src');",
+											"});",
+											"",
+											"",
+											"pm.test(\"The 'src' field must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.src).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : \"876543\",\n    \"src\" : \"\",\n    \"des\" : \"Medellin\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "400 Create Reservation - Destination empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"The response must contain the 'des' field\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData).to.have.property('des');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Des must be a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.des).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Des should not be empty\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"aadhar\" : \"876543\",\n    \"src\" : \"Bogota\",\n    \"des\" : \"\",\n    \"ddate\" : \"2025-05-29\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/reservation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"reservation"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cancelation",
+					"item": [
+						{
+							"name": "Cancelation - Success",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PNR\":\"PNR-758107\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/cancel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancelation - Wrong PNR",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PNR\":\"PNR-18523694\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/cancel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancelation - PNR null",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PNR\":null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/cancel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancelation - PNR empty",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PNR\":\"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/passenger/cancel",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"passenger",
+										"cancel"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "The `/collections` endpoints let you manage your [collections](https://learning.postman.com/docs/sending-requests/intro-to-collections/)."
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://farming-simulator.pstmn.io"
+		}
+	]
+}
