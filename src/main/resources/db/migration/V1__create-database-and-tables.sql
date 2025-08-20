@@ -1,26 +1,13 @@
--- Migración 1: Crear la base de datos solo si no existe
+-- Crear la base de datos solo si no existe
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'airlinemanagementsystem')
 BEGIN
     CREATE DATABASE airlinemanagementsystem;
 END;
 
--- Migración 2: Usar la base de datos
+-- Usar la base de datos
 USE airlinemanagementsystem;
 
--- Migración 3: Crear tabla 'cancel'
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'cancel' AND xtype = 'U')
-BEGIN
-    CREATE TABLE cancel (
-        PNR VARCHAR(200) NULL,
-        name VARCHAR(45) NULL,
-        cancelno VARCHAR(45) NOT NULL,
-        fcode VARCHAR(45) NULL,
-        date DATE NULL,
-        PRIMARY KEY (cancelno)
-    );
-END;
-
--- Migración 4: Crear tabla 'flight'
+-- Crear tabla 'flight'
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'flight' AND xtype = 'U')
 BEGIN
     CREATE TABLE flight (
@@ -32,7 +19,7 @@ BEGIN
     );
 END;
 
--- Migración 5: Crear tabla 'passenger'
+-- Crear tabla 'passenger'
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'passenger' AND xtype = 'U')
 BEGIN
     CREATE TABLE passenger (
@@ -46,7 +33,7 @@ BEGIN
     );
 END;
 
--- Migración 6: Crear tabla 'reservation'
+-- Crear tabla 'reservation'
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'reservation' AND xtype = 'U')
 BEGIN
     CREATE TABLE reservation (
@@ -62,5 +49,18 @@ BEGIN
         ddate DATE NULL,
         PRIMARY KEY (PNR),
         CONSTRAINT FK_aadhar FOREIGN KEY (aadhar) REFERENCES passenger (aadhar)
+    );
+END;
+
+-- Crear tabla 'cancel'
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'cancel' AND xtype = 'U')
+BEGIN
+    CREATE TABLE cancel (
+        PNR VARCHAR(200) NULL,
+        name VARCHAR(45) NULL,
+        cancelno VARCHAR(45) NOT NULL,
+        fcode VARCHAR(45) NULL,
+        date DATE NULL,
+        PRIMARY KEY (cancelno)
     );
 END;
